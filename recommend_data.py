@@ -3,6 +3,7 @@ import numpy as np
 import uvicorn
 import logging
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -44,6 +45,16 @@ indices = pd.Series(data.index, index=data["PID"]).drop_duplicates()
 
 # FastAPI App
 app = FastAPI(title="Product Recommendation API", version="1.0")
+
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],        # Or ["*"] to allow all (not recommended for prod)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/recommend/{pid}")
 def get_recommendations(pid: str, top_n: int = 5):
